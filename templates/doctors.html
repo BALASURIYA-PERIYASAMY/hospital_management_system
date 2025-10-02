@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Doctors</h2>
+
+<div class="row mb-3">
+  <div class="col-md-6">
+    <form class="d-flex" method="get" action="{{ url_for('doctors') }}">
+      <input class="form-control me-2" name="q" placeholder="Search by name" value="{{ q }}">
+      <select class="form-select me-2" name="spec">
+        <option value="">All specializations</option>
+        {% for s in specs %}
+        <option value="{{ s }}" {% if s==spec %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
+  </div>
+  <div class="col-md-6 text-end">
+    <a href="{{ url_for('add_doctor') }}" class="btn btn-primary">Add New Doctor</a>
+  </div>
+</div>
+
+<table class="table table-striped">
+  <thead><tr><th>ID</th><th>Name</th><th>Specialization</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for d in doctors %}
+    <tr>
+      <td>{{ d.doctor_id }}</td>
+      <td>{{ d.name }}</td>
+      <td>{{ d.specialization }}</td>
+      <td>
+        <a href="{{ url_for('edit_doctor', did=d.doctor_id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+        <form method="post" action="{{ url_for('delete_doctor', did=d.doctor_id) }}" style="display:inline;" onsubmit="return confirm('Delete doctor?');">
+          <button class="btn btn-sm btn-outline-danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4">No doctors found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

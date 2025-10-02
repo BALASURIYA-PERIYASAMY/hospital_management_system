@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{% if doctor %}Edit Doctor{% else %}Add Doctor{% endif %}</h2>
+<form method="post">
+  <div class="mb-3">
+    <label class="form-label">Name</label>
+    <input class="form-control" name="name" required value="{{ doctor.name if doctor }}">
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Specialization</label>
+    <input class="form-control" name="specialization" required value="{{ doctor.specialization if doctor }}">
+  </div>
+  <button class="btn btn-primary" type="submit">Save</button>
+  <a class="btn btn-secondary" href="{{ url_for('doctors') }}">Cancel</a>
+</form>
+{% endblock %}

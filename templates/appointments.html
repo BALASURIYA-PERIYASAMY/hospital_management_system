@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Appointments</h2>
+
+<div class="row mb-3">
+  <div class="col-md-8">
+    <form class="row g-2" method="get" action="{{ url_for('appointments') }}">
+      <div class="col-auto">
+        <select class="form-select" name="patient_id">
+          <option value="">All patients</option>
+          {% for p in patients %}
+            <option value="{{ p.patient_id }}" {% if p.patient_id==patient_id %}selected{% endif %}>{{ p.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <select class="form-select" name="doctor_id">
+          <option value="">All doctors</option>
+          {% for d in doctors %}
+            <option value="{{ d.doctor_id }}" {% if d.doctor_id==doctor_id %}selected{% endif %}>{{ d.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <input class="form-control" type="date" name="start" value="{{ start }}">
+      </div>
+      <div class="col-auto">
+        <input class="form-control" type="date" name="end" value="{{ end }}">
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-outline-primary">Filter</button>
+      </div>
+    </form>
+  </div>
+  <div class="col-md-4 text-end">
+    <a href="{{ url_for('add_appointment') }}" class="btn btn-primary">Schedule New Appointment</a>
+  </div>
+</div>
+
+<table class="table table-hover">
+  <thead><tr><th>Appointment ID</th><th>Patient</th><th>Doctor</th><th>Date</th><th>Status</th><th>Notes</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for a in appointments %}
+    <tr>
+      <td>{{ a.appointment_id }}</td>
+      <td>{{ a.patient_name }}</td>
+      <td>{{ a.doctor_name }}</td>
+      <td>{{ a.appointment_date }}</td>
+      <td>
+        {% if a.status == 'Completed' %}
+          <span class="badge bg-secondary">Completed</span>
+        {% elif a.status == 'Today' %}
+          <span class="badge bg-warning">Today</span>
+        {% else %}
+          <span class="badge bg-success">Upcoming</span>
+        {% endif %}
+      </td>
+      <td>{{ a.notes }}</td>
+      <td>
+        <a href="{{ url_for('edit_appointment', aid=a.appointment_id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+        <form method="post" action="{{ url_for('delete_appointment', aid=a.appointment_id) }}" style="display:inline;" onsubmit="return confirm('Delete appointment?');">
+          <button class="btn btn-sm btn-outline-danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7">No appointments found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

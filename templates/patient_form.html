@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{% if patient %}Edit Patient{% else %}Add Patient{% endif %}</h2>
+<form method="post">
+  <div class="mb-3">
+    <label class="form-label">Name</label>
+    <input class="form-control" name="name" required value="{{ patient.name if patient }}">
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Age</label>
+    <input type="number" class="form-control" name="age" required min="0" value="{{ patient.age if patient }}">
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Gender</label>
+    <select class="form-select" name="gender">
+      <option value="Male" {% if patient and patient.gender=='Male' %}selected{% endif %}>Male</option>
+      <option value="Female" {% if patient and patient.gender=='Female' %}selected{% endif %}>Female</option>
+      <option value="Other" {% if patient and patient.gender=='Other' %}selected{% endif %}>Other</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">City</label>
+    <input class="form-control" name="city" value="{{ patient.city if patient }}">
+  </div>
+
+  <button class="btn btn-primary" type="submit">Save</button>
+  <a class="btn btn-secondary" href="{{ url_for('patients') }}">Cancel</a>
+</form>
+{% endblock %}

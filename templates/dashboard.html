@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-3">Dashboard</h1>
+
+<div class="row">
+  <div class="col-md-6 mb-4">
+    <div class="card p-3">
+      <h5>Patients by City</h5>
+      <canvas id="chartPatientsByCity"></canvas>
+    </div>
+  </div>
+
+  <div class="col-md-6 mb-4">
+    <div class="card p-3">
+      <h5>Doctors by Specialization</h5>
+      <canvas id="chartDoctorsBySpec"></canvas>
+    </div>
+  </div>
+
+  <div class="col-12 mb-4">
+    <div class="card p-3">
+      <h5>Appointments Over Time</h5>
+      <canvas id="chartAppointmentsOverTime"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+async function fetchAndRender() {
+  const p = await fetch("/api/stats/patients_by_city").then(r=>r.json());
+  const d = await fetch("/api/stats/doctors_by_spec").then(r=>r.json());
+  const a = await fetch("/api/stats/appointments_over_time").then(r=>r.json());
+
+  // Patients by city - bar
+  const ctx1 = document.getElementById('chartPatientsByCity').getContext('2d');
+  new Chart(ctx1, {
+    type: 'bar',
+    data: {
+      labels: p.map(x => x.city),
+      datasets: [{ label: 'Patients', data: p.map(x => x.cnt) }]
+    },
+    options: { responsive: true }
+  });
+
+  // Doctors by specialization - pie
+  const ctx2 = document.getElementById('chartDoctorsBySpec').getContext('2d');
+  new Chart(ctx2, {
+    type: 'pie',
+    data: {
+      labels: d.map(x => x.spec),
+      datasets: [{ label: 'Doctors', data: d.map(x => x.cnt) }]
+    },
+    options: { responsive: true }
+  });
+
+  // Appointments over time - line
+  const ctx3 = document.getElementById('chartAppointmentsOverTime').getContext('2d');
+  new Chart(ctx3, {
+    type: 'line',
+    data: {
+      labels: a.map(x => x.dt),
+      datasets: [{ label: 'Appointments', data: a.map(x => x.cnt), tension: 0.3 }]
+    },
+    options: { responsive: true }
+  });
+}
+
+fetchAndRender();
+</script>
+{% endblock %}
